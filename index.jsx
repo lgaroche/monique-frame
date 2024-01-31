@@ -148,8 +148,9 @@ app.use(async ctx => {
         <title>Monique Frame</title>
         <meta charset="utf-8">
         <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content="data:image/svg+xml;base64,${btoa(svg)}" />
+        <meta property="fc:frame:image" content="data:image/svg+xml;base64,${Buffer.from(svg, 'base64')}" />
         <meta property="fc:frame:button:1" content="Reveal mine" />
+        <meta property="fc:frame:post_url" content="https://frame.monique.app/?fid=${fid}" />
       </head>
       <body>
         ${svg}
