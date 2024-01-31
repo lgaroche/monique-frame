@@ -50,7 +50,7 @@ app.use(async ctx => {
   let {fid, share} = ctx.request.query
 
   if (share !== undefined) {
-    ctx.redirect(`/?fid=${fid}`)
+    ctx.redirect(`https://frame.monique.app/?fid=${fid}`)
     return
   }
 
@@ -170,14 +170,16 @@ app.use(async ctx => {
     `
   }
 
+  const img = `data:image/svg+xml;base64,${btoa(svg)}`
 
   ctx.body = `
     <html>
       <head>
         <title>Monique Frame</title>
         <meta charset="utf-8">
+        <meta property="og:image" content="https://monique.app/apple-icon.png">
         <meta property="fc:frame" content="vNext">
-        <meta property="fc:frame:image" content="data:image/svg+xml;base64,${btoa(svg)}">
+        <meta property="fc:frame:image" content="${img}">
         ${btn}
         
       </head>
