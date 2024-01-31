@@ -132,7 +132,21 @@ app.use(async ctx => {
       },
     ],
   })
-  ctx.body = svg
+
+
+  ctx.body = `
+    <html>
+      <head>
+        <title>Monique Frame</title>
+        <meta charset="utf-8">
+        <meta property="fc:frame" content="vNext" />
+        <meta property="fc:frame:image" content="data:image/svg+xml;base64,${btoa(svg)}" />
+        <meta property="fc:frame:button:1" content="Reveal mine" />
+      </head>
+      <body>
+        ${svg}
+      </body>
+  `
 })
 
 app.listen(3000)
