@@ -3,8 +3,10 @@ import React from "react"
 import Koa from "koa"
 import satori from "satori"
 import fs from "fs"
+import { bodyParser } from "@koa/bodyparser"
 
 const app = new Koa()
+app.use(bodyParser())
 
 const interSemiBold = fs.readFileSync('./Inter-SemiBold.ttf')
 
@@ -45,7 +47,22 @@ const cloudify = (url) => {
 }
 
 app.use(async ctx => {
-  const {fid} = ctx.request.query
+  let {fid, share} = ctx.request.query
+
+  if (share !== undefined) {
+    ctx.redirect(`/?fid=${fid}`)
+    return
+  }
+
+  if (ctx.request.method === "POST") {
+    const {untrustedData} = ctx.request.body
+    if (!untrustedData) {
+      ctx.body = "Bad request"
+      ctx.status = 400
+      return
+    }
+    fid = untrustedData.fid
+  }
 
   if (!fid) {
     ctx.body = "No fid provided"
@@ -141,16 +158,28 @@ app.use(async ctx => {
     ],
   })
 
+  let btn = `
+    <meta property="fc:frame:post_url" content="https://frame.monique.app/?fid=${fid}">
+    <meta property="fc:frame:button:1" content="👵 Reveal mine">
+  `
+  if (ctx.request.method === "POST") {
+    btn = `
+      <meta property="fc:frame:post_url" content="https://frame.monique.app/?share&fid=${fid}">
+      <meta property="fc:frame:button:1" content="Share">
+      <meta property="fc:frame:button:1:action" content="post_redirect">
+    `
+  }
+
 
   ctx.body = `
     <html>
       <head>
         <title>Monique Frame</title>
         <meta charset="utf-8">
-        <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content="data:image/svg+xml;base64,${Buffer.from(svg, 'base64')}" />
-        <meta property="fc:frame:button:1" content="Reveal mine" />
-        <meta property="fc:frame:post_url" content="https://frame.monique.app/?fid=${fid}" />
+        <meta property="fc:frame" content="vNext">
+        <meta property="fc:frame:image" content="data:image/svg+xml;base64,${btoa(svg)}">
+        ${btn}
+        
       </head>
       <body>
         ${svg}
