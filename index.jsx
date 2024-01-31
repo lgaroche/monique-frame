@@ -51,7 +51,7 @@ app.use(async ctx => {
     ctx.body = "No fid provided"
     return
   }
-  
+
   let userInfo = {
     fid,
     pfp: cloudify("https://explorer.farcaster.xyz/avatar.png"),
@@ -62,7 +62,7 @@ app.use(async ctx => {
   }
 
   try {
-    const res = await fetch(`http://192.168.1.131:2281/v1/userDataByFid?fid=${fid}`)
+    const res = await fetch(`http://51.158.54.127:2281/v1/userDataByFid?fid=${fid}`)
     const {messages} = await res.json()
     
     for (const {data} of messages) {
@@ -85,7 +85,7 @@ app.use(async ctx => {
   }
 
   try {
-    const res = await fetch(`http://192.168.1.131:2281/v1/verificationsByFid?fid=${fid}`)
+    const res = await fetch(`http://51.158.54.127:2281/v1/verificationsByFid?fid=${fid}`)
     const {messages} = await res.json()
     if (messages.length > 0) {
       userInfo.address = messages[messages.length - 1].data.verificationAddEthAddressBody.address
