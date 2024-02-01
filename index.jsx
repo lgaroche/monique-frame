@@ -4,6 +4,7 @@ import Koa from "koa"
 import satori from "satori"
 import fs from "fs"
 import { bodyParser } from "@koa/bodyparser"
+import { Transformer } from "@napi-rs/image"
 
 const app = new Koa()
 app.use(bodyParser())
@@ -170,7 +171,7 @@ app.use(async ctx => {
     `
   }
 
-  const img = `data:image/svg+xml;base64,${btoa(svg)}`
+  const png = Buffer.from(await Transformer.fromSvg(svg).png()).toString('base64')
 
   ctx.body = `
     <html>
@@ -179,12 +180,12 @@ app.use(async ctx => {
         <meta charset="utf-8">
         <meta property="og:image" content="https://monique.app/apple-icon.png">
         <meta property="fc:frame" content="vNext">
-        <meta property="fc:frame:image" content="${img}">
+        <meta property="fc:frame:image" content="data:image/png;base64,${png}">
         ${btn}
         
       </head>
       <body>
-        ${svg}
+        <img src="data:image/png;base64,${png}" />
       </body>
   `
 })
