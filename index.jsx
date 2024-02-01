@@ -14,7 +14,7 @@ const interSemiBold = fs.readFileSync('./Inter-SemiBold.ttf')
 const bodyStyle = {
   display: "flex",
   flexDirection: "column",
-  width: "100%",
+  width: "573px",
   height: "300px",
   justifyContent: "center",
   background: "#282828",
@@ -171,7 +171,7 @@ app.use(async ctx => {
     `
   }
 
-  const png = Buffer.from(await Transformer.fromSvg(svg).png()).toString('base64')
+  const png = Buffer.from(await Transformer.fromSvg(svg).crop(0, 0, 573, 300).png()).toString('base64')
 
   ctx.body = `
     <html>
