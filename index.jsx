@@ -51,11 +51,16 @@ app.use(async ctx => {
   let {fid, share} = ctx.request.query
 
   if (share !== undefined) {
-    ctx.redirect(`https://frame.monique.app/?fid=${fid}`)
+    const composeUrl = "https://warpcast.com/~/compose"
+    const text = "Share yours! The first 500 Monics revealed and shared on Farcaster will get early access to the mutable Monic NFT claim.\nClick on reveal mine, then click on share.\n\nFollow @superlouis.eth for updates."
+    const embeds = `https://frame.monique.app/?fid=${fid}`
+    const shareUrl = `${composeUrl}?text=${encodeURIComponent(text)}&embeds[]=${encodeURIComponent(embeds)}`
+    ctx.redirect(shareUrl)
     return
   }
 
-  if (ctx.request.method === "POST") {
+  let reveal = ctx.request.method === "POST"
+  if (reveal) {
     const {untrustedData} = ctx.request.body
     if (!untrustedData) {
       ctx.body = "Bad request"
@@ -63,6 +68,8 @@ app.use(async ctx => {
       return
     }
     fid = untrustedData.fid
+
+    pillStyle.background = "rgb(25, 137, 172)"
   }
 
   if (!fid) {
@@ -163,11 +170,14 @@ app.use(async ctx => {
     <meta property="fc:frame:post_url" content="https://frame.monique.app/?fid=${fid}">
     <meta property="fc:frame:button:1" content="👵 Reveal mine">
   `
-  if (ctx.request.method === "POST") {
+  if (reveal) {
     btn = `
       <meta property="fc:frame:post_url" content="https://frame.monique.app/?share&fid=${fid}">
       <meta property="fc:frame:button:1" content="Share">
       <meta property="fc:frame:button:1:action" content="post_redirect">
+      <meta property="fc:frame:button:2" content="Learn more">
+      <meta property="fc:frame:button:2:action" content="link">
+      <meta property="fc:frame:button:2:target" content="https://monique.app">
     `
   }
 
